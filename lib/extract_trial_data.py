@@ -61,8 +61,8 @@ def extract_kinematics_and_forceplates(
     Returns timestamp, CoM, EE, FP1, FP2 using fixed column positions.
     """
     X = _read_numeric_matrix(csv_path)
-    print(X.shape)
-    print(X[0])
+    #print(X.shape)
+    #print(X[0])
 
     ts = X[:, IDX_TIMESTAMP].astype(float).tolist()
 
@@ -97,7 +97,7 @@ def extract_goals(
     """
     X = _read_numeric_matrix(csv_path)
 
-    ts = X[:, IDX_TIMESTAMP[0]].astype(float).tolist()
+    ts = X[:, IDX_TIMESTAMP].astype(float).tolist()
 
     GF = [row.copy() for row in X[:, IDX_GOAL_F[0]:IDX_GOAL_F[1]]]
     GT = [row.copy() for row in X[:, IDX_GOAL_T[0]:IDX_GOAL_T[1]]]
