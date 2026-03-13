@@ -5,9 +5,9 @@ from lib.detect_spikes import detect_known_number_of_spikes, auto_prominence
 import matplotlib.pyplot as plt
 
 
-file_path = "Darren_grfmpc_experiment/Darren_Standing_Tran_1_2026-02-24_11-27-20.csv"   # <-- change this to your file
-file_path = "Darren_grfmpc_experiment/Darren_Standing_Imp_1_2026-02-24_12-12-11.csv"
-file_path = "Darren_grfmpc_experiment/Darren_Standing_MPC_1_2026-02-24_11-29-49.csv"
+file_path = "robust_data/Darren_grfmpc_experiment/Darren_Standing_Tran_1_2026-02-24_11-27-20.csv"   # <-- change this to your file
+file_path = "robust_data/Darren_grfmpc_experiment/Darren_Standing_Imp_1_2026-02-24_12-12-11.csv"
+file_path = "robust_data/Darren_grfmpc_experiment/Darren_Standing_MPC_1_2026-02-24_11-29-49.csv"
 
 # ---- 2. Call Function 1 ----
 timestamps, CoM, EE, FP1, FP2 = extract_kinematics_and_forceplates(file_path)

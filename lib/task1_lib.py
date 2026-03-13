@@ -112,7 +112,7 @@ def analyze_position_data(
     spikes,
     baseline_reference_window,
     integral_window,
-    settle_time_threshold=1 / np.e,
+    settle_time_threshold=1 / 2.0,
     plot = False
 ):
     """
@@ -292,7 +292,7 @@ def analyze_velocity_data(
         integral_vels = vels[i_start:i_stop]          # shape (I,3)
 
         integral_kinetic_energy = np.sum(integral_vels**2, axis=1)
-        gk = gaussian_kernel(sigma=1, radius=10)
+        gk = gaussian_kernel(sigma=3, radius=10)
         integral_kinetic_energy_smoothed = smooth_1d(integral_kinetic_energy, gk)
 
         # Local index of spike within analysis window

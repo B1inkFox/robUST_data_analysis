@@ -7,11 +7,23 @@ from lib.task1_lib import *
 
 DT = 0.01
 BASELINE_WINDOW = [-200, -100]
-INTEGRAL_WINDOW = [0, 250]
+INTEGRAL_WINDOW = [0, 300]
 
-csv_path_tran = "Darren_grfmpc_experiment/Darren_Standing_Tran_1_2026-02-24_11-27-20.csv"
-csv_path_imp  = "Darren_grfmpc_experiment/Darren_Standing_Imp_1_2026-02-24_12-12-11.csv"
-csv_path_mpc  = "Darren_grfmpc_experiment/Darren_Standing_MPC_1_2026-02-24_11-29-49.csv"
+
+# For Darren's data 
+#csv_path_tran = "robust_data/Darren_grfmpc_experiment/Darren_Standing_Tran_1_2026-02-24_11-27-20.csv"
+#csv_path_imp  = "robust_data/Darren_grfmpc_experiment/Darren_Standing_Imp_1_2026-02-24_12-12-11.csv"
+#csv_path_mpc  = "robust_data/Darren_grfmpc_experiment/Darren_Standing_MPC_1_2026-02-24_11-29-49.csv"
+
+# S6 data
+csv_path_tran = "robust_data/S6/S6_Standing_Tran_1_2026-03-08_16-28-23.csv"
+csv_path_imp  = "robust_data/S6/S6_Standing_Imp_1_2026-03-08_16-42-23.csv"
+csv_path_mpc  = "robust_data/S6/S6_Standing_MPC_1_2026-03-08_16-33-02.csv"
+
+# S7 data
+#csv_path_tran = "robust_data/S7/S7_Standing_Tran_1_2026-03-09_14-07-39.csv"
+#csv_path_imp  = "robust_data/S7/S7_Standing_Imp_1_2026-03-09_14-17-24.csv"
+#csv_path_mpc  = "robust_data/S7/S7_Standing_MPC_1_2026-03-09_14-10-25.csv"
 
 csv_path_list = [csv_path_tran, csv_path_imp, csv_path_mpc]
 num_spikes_list = [10, 11, 10]
@@ -21,6 +33,7 @@ all_summary_com = []
 all_summary_vel = []
 
 print_summary = False
+# analyze each trial and collect summary metrics for comparison plots
 for i in range(len(csv_path_list)):
 
     csv_path = csv_path_list[i]
