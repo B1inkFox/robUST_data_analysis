@@ -129,7 +129,7 @@ def analyze_position_data(
         Summary statistics across spikes.
     """
     samples = np.asarray(samples, dtype=float)
-    impulses = np.asarray(impulses, dtype=float)
+    impulses = np.asarray(impulses, dtype=int)
     spikes = np.asarray(spikes, dtype=int)
 
     results = []
@@ -143,10 +143,10 @@ def analyze_position_data(
 
         # Skip spikes too close to boundaries
         if b_start < 0 or b_stop > len(samples):
-            raise ValueError("Baseline window index overflow for impulse at t_index = ", imp_idx)
+            raise ValueError(f"Baseline window index overflow for impulse at t_index = {imp_idx}")
             continue
         if i_start < 0 or i_stop > len(samples):
-            raise ValueError("Integral window index overflow for impulse at t_index = ", imp_idx)
+            raise ValueError(f"Integral window index overflow for impulse at t_index = {imp_idx}")
             continue
 
         # Extract windows
@@ -161,7 +161,7 @@ def analyze_position_data(
         integral_norm = np.linalg.norm(integral_centered_smoothed, axis=1)
 
         # Local index of spike within analysis window
-        peak_local_idx = spike_idx - imp_idx
+        peak_local_idx = spike_idx - i_start
         peak_error = float(integral_norm[peak_local_idx])
 
         # Settling time relative to spike, threshold = threshold * peak
@@ -198,7 +198,6 @@ def analyze_velocity_data(
     samples,
     impulses,
     spikes,
-    baseline_reference_window,
     integral_window,
 ):
     """
@@ -225,7 +224,7 @@ def analyze_velocity_data(
         Summary statistics across spikes.
     """
     vels = np.gradient(samples, DT, axis=0)   # shape (N,3)
-    impulses = np.asarray(impulses, dtype=float)
+    impulses = np.asarray(impulses, dtype=int)
     spikes = np.asarray(spikes, dtype=int)
 
     results = []
@@ -234,30 +233,22 @@ def analyze_velocity_data(
         imp_idx = impulses[i]
         spike_idx = spikes[i]
         # Absolute window bounds
-        b_start, b_stop = _window_slice(imp_idx, baseline_reference_window)
         i_start, i_stop = _window_slice(imp_idx, integral_window)
 
         # Skip spikes too close to boundaries
-        if b_start < 0 or b_stop > len(samples):
-            raise ValueError("Baseline window index overflow for impulse at t_index = ", imp_idx)
-            continue
         if i_start < 0 or i_stop > len(samples):
-            raise ValueError("Integral window index overflow for impulse at t_index = ", imp_idx)
+            raise ValueError(f"Integral window index overflow for impulse at t_index = {imp_idx}")
             continue
 
         # Extract windows
-        baseline_vels = vels[b_start:b_stop]          # shape (B,3)
         integral_vels = vels[i_start:i_stop]          # shape (I,3)
 
-        baseline_kinetic_energy = np.sum(baseline_vels**2, axis=1)
-        baseline_kinetic_energy_average = np.mean(baseline_kinetic_energy, axis=0)        # shape (3,)
         integral_kinetic_energy = np.sum(integral_vels**2, axis=1)
-        integral_kinetic_energy_centered = integral_kinetic_energy - baseline_kinetic_energy_average
         gk = gaussian_kernel(sigma=1, radius=10)
-        integral_kinetic_energy_smoothed = smooth_3d(integral_kinetic_energy_centered, gk)
+        integral_kinetic_energy_smoothed = smooth_1d(integral_kinetic_energy, gk)
 
         # Local index of spike within analysis window
-        peak_local_idx = spike_idx - imp_idx
+        peak_local_idx = spike_idx - i_start
         peak_speed = float(np.sqrt(integral_kinetic_energy_smoothed[peak_local_idx]))
 
         # Integral over requested window
