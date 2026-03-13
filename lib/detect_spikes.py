@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.signal import find_peaks, peak_widths
-import matplotlib.pyplot as plt
 
 
 def detect_known_number_of_spikes(

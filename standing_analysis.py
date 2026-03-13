@@ -1,14 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from lib.extract_trial_data import extract_kinematics_and_forceplates, extract_goals
-from lib.kernels import gaussian_kernel
-from lib.detect_spikes import detect_known_number_of_spikes, auto_prominence
+from lib.extract_trial_data import *
+from lib.kernels import *
+from lib.detect_spikes import *
 
-
-# ============================================================
-# CONFIG
-# ============================================================
 csv_path_tran = "Darren_grfmpc_experiment/Darren_Standing_Tran_1_2026-02-24_11-27-20.csv"
 csv_path_imp  = "Darren_grfmpc_experiment/Darren_Standing_Imp_1_2026-02-24_12-12-11.csv"
 csv_path_mpc  = "Darren_grfmpc_experiment/Darren_Standing_MPC_1_2026-02-24_11-29-49.csv"
@@ -27,24 +23,6 @@ INTEGRAL_START_REL = -100
 INTEGRAL_END_REL   =  200
 
 NUM_SPIKES = 10
-
-
-# ============================================================
-# HELPERS
-# ============================================================
-def smooth_1d(x, kernel):
-    return np.convolve(x, kernel, mode='same')
-
-
-def smooth_3d(x, kernel):
-    """
-    x: (N,3)
-    smooth each coordinate separately
-    """
-    out = np.zeros_like(x)
-    for j in range(3):
-        out[:, j] = np.convolve(x[:, j], kernel, mode='same')
-    return out
 
 
 def rel_to_local_index(rel_sample, pre_samples):
@@ -186,11 +164,14 @@ timestamps, goal_force, goal_torque, goal_position, goal_euler, goal_velocity, g
 t = np.array(timestamps)
 
 # CoM error relative to goal position
-com = np.array([T[0:3, 3] for T in CoM]) - np.array(goal_position)
+com_pos = np.array([T[0:3, 3] for T in CoM]) - np.array(goal_position)
 
 # Smooth 3D CoM coordinates
 gk = gaussian_kernel(sigma=1, radius=3)
-com_smoothed = smooth_3d(com, gk)
+com_smoothed = smooth_3d(com_pos, gk)
+
+com_velocity = np.gradient(com_pos, dt, axis=0)   # shape (N,3)
+vel2 = np.sum(com_velocity**2, axis=1)                 # ||v||^2
 
 # Smoothed CoM magnitude for spike detection
 com_magnitude_smoothed = np.linalg.norm(com_smoothed, axis=1)
@@ -208,15 +189,6 @@ peak_idx, peak_times, peak_vals, props = detect_known_number_of_spikes(
 print("Detected spike times:")
 print(peak_times)
 print("")
-
-
-# ============================================================
-# VELOCITY FROM SMOOTHED CoM
-# ============================================================
-# np.gradient uses central difference in the interior
-com_velocity = np.gradient(com_smoothed, dt, axis=0)   # shape (N,3)
-vel2 = np.sum(com_velocity**2, axis=1)                 # ||v||^2
-
 
 # ============================================================
 # ANALYZE EACH SPIKE
@@ -257,25 +229,6 @@ for spike_i, idx in enumerate(peak_idx):
     results.append(metrics)
     valid_peak_idx.append(idx)
     valid_peak_times.append(t[idx])
-
-
-# ============================================================
-# REPORT PER-SPIKE
-# ============================================================
-print("Per-spike metrics")
-print("=" * 60)
-for k, r in enumerate(results):
-    bx, by, bz = r["baseline_pos"]
-    print(f"Spike {k+1}: t = {r['global_peak_time']:.3f} s")
-    print(f"  baseline_pos              = [{bx:.6f}, {by:.6f}, {bz:.6f}]")
-    print(f"  baseline_norm             = {r['baseline_norm']:.6f}")
-    print(f"  peak_excursion            = {r['peak_excursion']:.6f}")
-    print(f"  CoM settling time         = {r['com_settle_time']:.6f} s")
-    print(f"  integrated CoM deviation  = {r['integrated_com_deviation']:.6f}")
-    print(f"  vel2 baseline             = {r['vel2_baseline']:.6f}")
-    print(f"  peak vel2                 = {r['peak_vel2']:.6f}")
-    print(f"  vel2 settling time        = {r['vel2_settle_time']:.6f} s")
-    print("")
 
 
 # ============================================================
