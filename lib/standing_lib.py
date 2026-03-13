@@ -97,7 +97,7 @@ def get_impulses_and_spikes(t, com, num_spikes, dt = 0.01, imp_offset=25, plot =
         for idx in com_spike_idx:
             plt.axvline(t[idx], linestyle="--", alpha=0.4, color="blue")
         plt.xlabel("Time [s]")
-        plt.ylabel("||CoM - goal|| [m]")
+        plt.ylabel("||CoM|| [m] & ||v|| [m/s]")
         plt.title("Detected disturbance times")
         plt.grid(True)
         plt.legend()

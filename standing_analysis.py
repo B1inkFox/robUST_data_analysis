@@ -16,14 +16,14 @@ INTEGRAL_WINDOW = [0, 300]
 #csv_path_mpc  = "robust_data/Darren_grfmpc_experiment/Darren_Standing_MPC_1_2026-02-24_11-29-49.csv"
 
 # S6 data
-csv_path_tran = "robust_data/S6/S6_Standing_Tran_1_2026-03-08_16-28-23.csv"
-csv_path_imp  = "robust_data/S6/S6_Standing_Imp_1_2026-03-08_16-42-23.csv"
-csv_path_mpc  = "robust_data/S6/S6_Standing_MPC_1_2026-03-08_16-33-02.csv"
+#csv_path_tran = "robust_data/S6/S6_Standing_Tran_1_2026-03-08_16-28-23.csv"
+#csv_path_imp  = "robust_data/S6/S6_Standing_Imp_1_2026-03-08_16-42-23.csv"
+#csv_path_mpc  = "robust_data/S6/S6_Standing_MPC_1_2026-03-08_16-33-02.csv"
 
 # S7 data
-#csv_path_tran = "robust_data/S7/S7_Standing_Tran_1_2026-03-09_14-07-39.csv"
-#csv_path_imp  = "robust_data/S7/S7_Standing_Imp_1_2026-03-09_14-17-24.csv"
-#csv_path_mpc  = "robust_data/S7/S7_Standing_MPC_1_2026-03-09_14-10-25.csv"
+csv_path_tran = "robust_data/S7/S7_Standing_Tran_1_2026-03-09_14-07-39.csv"
+csv_path_imp  = "robust_data/S7/S7_Standing_Imp_1_2026-03-09_14-17-24.csv"
+csv_path_mpc  = "robust_data/S7/S7_Standing_MPC_1_2026-03-09_14-10-25.csv"
 
 csv_path_list = [csv_path_tran, csv_path_imp, csv_path_mpc]
 num_spikes_list = [10, 11, 10]
