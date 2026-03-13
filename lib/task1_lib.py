@@ -46,6 +46,17 @@ def _safe_stats(values):
         "max": float(np.max(arr)),
     }
 
+def print_summary(label, summary):
+    print(f"\n--- {label} ---")
+
+    for metric, stats in summary.items():
+        print(f"\n{metric}:")
+        print(f"  count : {stats['count']}")
+        print(f"  mean  : {stats['mean']:.6f}")
+        print(f"  std   : {stats['std']:.6f}")
+        print(f"  min   : {stats['min']:.6f}")
+        print(f"  max   : {stats['max']:.6f}")
+
 def get_impulses_and_spikes(t, com, num_spikes, dt = 0.01, imp_offset=25, plot = False):
 
     com_pos = np.asarray(com)
@@ -102,6 +113,7 @@ def analyze_position_data(
     baseline_reference_window,
     integral_window,
     settle_time_threshold=1 / np.e,
+    plot = False
 ):
     """
     Analyze stable-standing position response around each spike.
@@ -171,12 +183,12 @@ def analyze_position_data(
         )
 
         if settle_local_idx is None:
-            raise ValueError("Signal never settles below threhold for impulse at t_index = ", imp_idx)
+            raise ValueError(f"Signal never settles below threhold for impulse at t_index = {imp_idx}")
         else:
             settling_time = (settle_local_idx - peak_local_idx) * DT
 
         # Integral over requested window
-        integrated_error = float(np.sum(integral_norm))
+        integrated_error = float(np.sum(integral_norm) * DT)
 
         results.append({
             "impulse_idx": int(imp_idx),
@@ -184,6 +196,9 @@ def analyze_position_data(
             "settling_time": settling_time, #seconds
             "settling_threshold_value": settle_threshold_value,
             "integrated_error": integrated_error,
+            "peak_local_idx": int(peak_local_idx),
+            "settle_local_idx": int(settle_local_idx) if settle_local_idx is not None else None,
+            "integral_norm": integral_norm,
         })
 
     summary = {
@@ -192,6 +207,38 @@ def analyze_position_data(
         "integrated_error": _safe_stats([r["integrated_error"] for r in results]),
     }
 
+    if plot:
+        plt.figure(figsize=(11, 5))
+        window_t = np.arange(integral_window[0], integral_window[1] + 1) * DT
+
+        for k, r in enumerate(results):
+            y = r["integral_norm"]
+            plt.plot(window_t, y, alpha=0.7, label=f"Spike {k+1}")
+
+            plt.scatter(
+                window_t[r["peak_local_idx"]],
+                y[r["peak_local_idx"]],
+                marker="o"
+            )
+
+            if r["settle_local_idx"] is not None:
+                plt.scatter(
+                    window_t[r["settle_local_idx"]],
+                    y[r["settle_local_idx"]],
+                    marker="x"
+                )
+
+            plt.axhline(r["settling_threshold_value"], linestyle="--", alpha=0.3)
+
+        plt.axvline(0.0, linestyle="--", color="k", alpha=0.6)
+        plt.xlabel("Time relative to impulse [s]")
+        plt.ylabel("||CoM - baseline|| [m]")
+        plt.title("Event-aligned CoM deviation norm")
+        plt.grid(True)
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
+
     return results, summary
 
 def analyze_velocity_data(
@@ -199,6 +246,7 @@ def analyze_velocity_data(
     impulses,
     spikes,
     integral_window,
+    plot=False,
 ):
     """
     Analyze stable-standing velocity response around each spike.
@@ -252,12 +300,14 @@ def analyze_velocity_data(
         peak_speed = float(np.sqrt(integral_kinetic_energy_smoothed[peak_local_idx]))
 
         # Integral over requested window
-        integrated_kinetic_energy = float(np.sum(integral_kinetic_energy_smoothed))
+        integrated_kinetic_energy = float(np.sum(integral_kinetic_energy_smoothed) * DT)
 
         results.append({
             "impulse_idx": int(imp_idx),
             "peak_speed": peak_speed, #meters
             "integrated_kinetic_energy": integrated_kinetic_energy,
+            "integral_kinetic_energy_smoothed": integral_kinetic_energy_smoothed,
+            "peak_local_idx": int(peak_local_idx),
         })
 
     summary = {
@@ -265,4 +315,45 @@ def analyze_velocity_data(
         "integrated_kinetic_energy": _safe_stats([r["integrated_kinetic_energy"] for r in results]),
     }
 
+    if plot:
+        # 3) Overlay event-aligned ||v||^2
+        plt.figure(figsize=(11, 5))
+        for k, r in enumerate(results):
+            window_t = np.arange(integral_window[0], integral_window[1] + 1) * DT
+            y = r["integral_kinetic_energy_smoothed"]
+            plt.plot(window_t, y, alpha=0.7, label=f"Spike {k+1}")
+
+            plt.scatter(
+                window_t[r["peak_local_idx"]],
+                y[r["peak_local_idx"]],
+                marker="o"
+            )
+        plt.axvline(0.0, linestyle="--", color="k", alpha=0.6)
+        plt.xlabel("Time relative to spike [s]")
+        plt.ylabel("||v||^2")
+        plt.title("Event-aligned velocity norm squared")
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
+
     return results, summary
+
+def plot_metric_summary(metric_name, summaries, trial_labels, ylabel=None):
+    """
+    summaries: list of summary dicts, one per trial
+    metric_name: key inside each summary dict
+    trial_labels: e.g. ["tran", "imp", "mpc"]
+    """
+    means = [s[metric_name]["mean"] for s in summaries]
+    stds  = [s[metric_name]["std"]  for s in summaries]
+
+    x = np.arange(len(trial_labels))
+
+    plt.figure(figsize=(7, 5))
+    plt.bar(x, means, yerr=stds, capsize=6, alpha=0.8)
+    plt.xticks(x, trial_labels)
+    plt.ylabel(ylabel if ylabel is not None else metric_name)
+    plt.title(metric_name.replace("_", " ").title())
+    plt.grid(True, axis="y", alpha=0.3)
+    plt.tight_layout()
+    plt.show()
