@@ -75,7 +75,7 @@ def get_impulses_and_spikes(t, com, num_spikes, dt = 0.01, imp_offset=25, plot =
         num_spikes=num_spikes,
         min_prominence=auto_prominence(com_vel_norm, frac=0.25),
         min_width=4,
-        min_distance=20,
+        min_distance=300,
     )
     imp_idx = vel_spike_idx - imp_offset
 
@@ -85,7 +85,7 @@ def get_impulses_and_spikes(t, com, num_spikes, dt = 0.01, imp_offset=25, plot =
         num_spikes=num_spikes,
         min_prominence=auto_prominence(com_pos_norm, frac=0.25),
         min_width=20,
-        min_distance=20,
+        min_distance=300,
     )
 
     if plot:
@@ -112,7 +112,7 @@ def analyze_position_data(
     spikes,
     baseline_reference_window,
     integral_window,
-    settle_time_threshold=1 / 2.0,
+    settle_time_threshold=1 / np.e,
     plot = False
 ):
     """
@@ -355,5 +355,104 @@ def plot_metric_summary(metric_name, summaries, trial_labels, ylabel=None):
     plt.ylabel(ylabel if ylabel is not None else metric_name)
     plt.title(metric_name.replace("_", " ").title())
     plt.grid(True, axis="y", alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+
+def extract_subject_condition_stats(all_subject_summary, metric_name):
+    """
+    Convert nested summary structure into mean/std arrays.
+
+    Parameters
+    ----------
+    all_subject_summary : list
+        Shape conceptually: [n_subjects][n_conditions]
+        Each entry is a summary dict for one condition of one subject.
+    metric_name : str
+        Metric to extract, e.g. 'peak_error'.
+
+    Returns
+    -------
+    means : ndarray, shape (n_subjects, n_conditions)
+    stds  : ndarray, shape (n_subjects, n_conditions)
+    """
+    n_subjects = len(all_subject_summary)
+    n_conditions = len(all_subject_summary[0])
+
+    means = np.zeros((n_subjects, n_conditions))
+    stds = np.zeros((n_subjects, n_conditions))
+
+    for s in range(n_subjects):
+        for c in range(n_conditions):
+            stats = all_subject_summary[s][c][metric_name]
+            means[s, c] = stats["mean"]
+            stds[s, c] = stats["std"]
+
+    return means, stds
+
+
+def plot_subject_level_across_conditions(
+    all_subject_summary,
+    metric_name,
+    trial_labels,
+    ylabel,
+    subject_labels=None,
+    show_errorbars=True,
+    figsize=(8, 5),
+):
+    """
+    Plot subject-level aggregation across conditions.
+
+    Each subject is one line across controller conditions.
+
+    Parameters
+    ----------
+    all_subject_summary : list
+        Nested list: [subject][condition] -> summary dict
+    metric_name : str
+        Metric key, e.g. 'peak_error'
+    trial_labels : list[str]
+        Condition names, e.g. ['tran', 'imp', 'mpc']
+    ylabel : str
+        Y-axis label
+    subject_labels : list[str] or None
+        Subject names. If None, use S1, S2, ...
+    show_errorbars : bool
+        Whether to show event-level std as error bars
+    """
+    means, stds = extract_subject_condition_stats(all_subject_summary, metric_name)
+
+    n_subjects, n_conditions = means.shape
+    x = np.arange(n_conditions)
+
+    if subject_labels is None:
+        subject_labels = [f"S{i+1}" for i in range(n_subjects)]
+
+    plt.figure(figsize=figsize)
+
+    for s in range(n_subjects):
+        if show_errorbars:
+            plt.errorbar(
+                x,
+                means[s],
+                yerr=stds[s],
+                marker="o",
+                linewidth=2,
+                capsize=4,
+                label=subject_labels[s],
+            )
+        else:
+            plt.plot(
+                x,
+                means[s],
+                marker="o",
+                linewidth=2,
+                label=subject_labels[s],
+            )
+
+    plt.xticks(x, trial_labels)
+    plt.ylabel(ylabel)
+    plt.title(metric_name.replace("_", " ").title())
+    plt.grid(True, axis="y", alpha=0.3)
+    plt.legend()
     plt.tight_layout()
     plt.show()

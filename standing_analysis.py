@@ -3,30 +3,20 @@ import matplotlib.pyplot as plt
 
 from lib.extract_trial_data import *
 from lib.detect_spikes import *
-from lib.task1_lib import *
+from lib.standing_lib import *
+from lib.data_lookup import *
 
 DT = 0.01
 BASELINE_WINDOW = [-200, -100]
-INTEGRAL_WINDOW = [0, 300]
+INTEGRAL_WINDOW = [0, 400]
 
+#csv_path_list, num_spikes_list = S1_STAND_FILE, S1_STAND_CNT
+#csv_path_list, num_spikes_list = S2_STAND_FILE, S2_STAND_CNT
+#csv_path_list, num_spikes_list = S3_STAND_FILE, S3_STAND_CNT
+csv_path_list, num_spikes_list = S4_STAND_FILE, S4_STAND_CNT
+#csv_path_list, num_spikes_list = S5_STAND_FILE, S5_STAND_CNT
+#csv_path_list, num_spikes_list = S6_STAND_FILE, S6_STAND_CNT
 
-# For Darren's data 
-#csv_path_tran = "robust_data/Darren_grfmpc_experiment/Darren_Standing_Tran_1_2026-02-24_11-27-20.csv"
-#csv_path_imp  = "robust_data/Darren_grfmpc_experiment/Darren_Standing_Imp_1_2026-02-24_12-12-11.csv"
-#csv_path_mpc  = "robust_data/Darren_grfmpc_experiment/Darren_Standing_MPC_1_2026-02-24_11-29-49.csv"
-
-# S6 data
-#csv_path_tran = "robust_data/S6/S6_Standing_Tran_1_2026-03-08_16-28-23.csv"
-#csv_path_imp  = "robust_data/S6/S6_Standing_Imp_1_2026-03-08_16-42-23.csv"
-#csv_path_mpc  = "robust_data/S6/S6_Standing_MPC_1_2026-03-08_16-33-02.csv"
-
-# S7 data
-csv_path_tran = "robust_data/S7/S7_Standing_Tran_1_2026-03-09_14-07-39.csv"
-csv_path_imp  = "robust_data/S7/S7_Standing_Imp_1_2026-03-09_14-17-24.csv"
-csv_path_mpc  = "robust_data/S7/S7_Standing_MPC_1_2026-03-09_14-10-25.csv"
-
-csv_path_list = [csv_path_tran, csv_path_imp, csv_path_mpc]
-num_spikes_list = [10, 11, 10]
 trial_labels = ["tran", "imp", "mpc"]
 
 all_summary_com = []
@@ -39,7 +29,7 @@ for i in range(len(csv_path_list)):
     csv_path = csv_path_list[i]
     num_spikes = num_spikes_list[i]
 
-    timestamps, CoM, EE, FP1, FP2 = extract_kinematics_and_forceplates(csv_path)
+    timestamps, CoM, Ee, Fp1, Fp2 = extract_kinematics_and_forceplates(csv_path)
     timestamps, goal_force, goal_torque, goal_position, goal_euler, goal_velocity, goal_angular_velocity = extract_goals(csv_path)
 
     t = np.array(timestamps)
@@ -48,7 +38,7 @@ for i in range(len(csv_path_list)):
     # impulses is the instant at which perturbation is delivered. It is the left corner of the COM error peak.
     # COM spikes is the instant at which COM error peaks, i.e. maximal COM extrusion. Vel spikes is the instant at which COM velocity peaks, which should be close to the impulse time but slightly delayed.
     impulses, com_spikes, vel_spikes = get_impulses_and_spikes(t, com, num_spikes, plot=True)
-    results_com, summary_com = analyze_position_data(com, impulses, com_spikes, BASELINE_WINDOW, INTEGRAL_WINDOW, plot=True)
+    results_com, summary_com = analyze_position_data(com, impulses, com_spikes, BASELINE_WINDOW, INTEGRAL_WINDOW, plot=True, settle_time_threshold= 1 / np.e)
     results_vel, summary_vel = analyze_velocity_data(com, impulses, vel_spikes, INTEGRAL_WINDOW, plot=True)
     
     all_summary_com.append(summary_com)
