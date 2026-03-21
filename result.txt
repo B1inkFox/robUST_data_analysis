@@ -1,0 +1,69 @@
+=== peak_error ===
+
+Condition stats (mean ± std across subjects):
+tran: 0.0974 ± 0.0368
+imp: 0.0968 ± 0.0291
+mpc: 0.0783 ± 0.0194
+
+ANOVA: F = 3.4643, p = 0.0719, eta^2 = 0.4093
+
+Pairwise Wilcoxon:
+tran vs imp: p = 0.6875, Δ = 0.0006
+tran vs mpc: p = 0.1562, Δ = 0.0191
+imp vs mpc: p = 0.0312, Δ = 0.0185
+
+=== settling_time_samples ===
+
+Condition stats (mean ± std across subjects):
+tran: 1.2744 ± 0.2614
+imp: 0.7808 ± 0.3618
+mpc: 0.6577 ± 0.2666
+
+ANOVA: F = 6.8323, p = 0.0135, eta^2 = 0.5774
+
+Pairwise Wilcoxon:
+tran vs imp: p = 0.0625, Δ = 0.4936
+tran vs mpc: p = 0.0312, Δ = 0.6168
+imp vs mpc: p = 0.6875, Δ = 0.1232
+
+=== integrated_error ===
+
+Condition stats (mean ± std across subjects):
+tran: 0.1576 ± 0.0671
+imp: 0.1135 ± 0.0382
+mpc: 0.0837 ± 0.0241
+
+ANOVA: F = 5.8332, p = 0.0209, eta^2 = 0.5385
+
+Pairwise Wilcoxon:
+tran vs imp: p = 0.0625, Δ = 0.0441
+tran vs mpc: p = 0.0938, Δ = 0.0739
+imp vs mpc: p = 0.1562, Δ = 0.0299
+
+=== peak_speed ===
+
+Condition stats (mean ± std across subjects):
+tran: 0.3130 ± 0.0820
+imp: 0.3071 ± 0.0696
+mpc: 0.2926 ± 0.0726
+
+ANOVA: F = 2.5132, p = 0.1305, eta^2 = 0.3345
+
+Pairwise Wilcoxon:
+tran vs imp: p = 0.6875, Δ = 0.0059
+tran vs mpc: p = 0.2188, Δ = 0.0205
+imp vs mpc: p = 0.0312, Δ = 0.0146
+
+=== integrated_kinetic_energy ===
+
+Condition stats (mean ± std across subjects):
+tran: 0.0439 ± 0.0303
+imp: 0.0438 ± 0.0243
+mpc: 0.0348 ± 0.0193
+
+ANOVA: F = 1.2498, p = 0.3277, eta^2 = 0.2000
+
+Pairwise Wilcoxon:
+tran vs imp: p = 0.8438, Δ = 0.0001
+tran vs mpc: p = 0.4375, Δ = 0.0091
+imp vs mpc: p = 0.0625, Δ = 0.0090

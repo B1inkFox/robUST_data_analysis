@@ -5,6 +5,7 @@ from lib.extract_trial_data import *
 from lib.detect_spikes import *
 from lib.standing_lib import *
 from lib.data_lookup import *
+from lib.stat_lib import *
 
 DT = 0.01
 BASELINE_WINDOW = [-200, -100]
@@ -19,7 +20,7 @@ subject_files = [
     (S6_STAND_FILE, S6_STAND_CNT),
 ]
 
-trial_labels = ["tran", "imp", "mpc"]
+trial_labels = ["Transparent", "Impedance", "MPC"]
 
 all_subject_summary_com = []
 all_subject_summary_vel = []
@@ -87,21 +88,24 @@ plot_subject_level_across_conditions(
     all_subject_summary_com,
     "peak_error",
     trial_labels,
-    ylabel="Peak CoM deviation [m]"
+    ylabel="Peak CoM deviation [m]",
+    title="Peak CoM Positional Deviation"
 )
 
 plot_subject_level_across_conditions(
     all_subject_summary_com,
     "settling_time_samples",
     trial_labels,
-    ylabel="Settling time [s]"
+    ylabel="Settling time [s]",
+    title="CoM Position Settling Time (Threshold=1/e)"
 )
 
 plot_subject_level_across_conditions(
     all_subject_summary_com,
     "integrated_error",
     trial_labels,
-    ylabel="Integrated CoM deviation"
+    ylabel="Integrated CoM deviation",
+    title="Integrated CoM Positional Deviation"
 )
 
 # Velocity metrics
@@ -109,12 +113,23 @@ plot_subject_level_across_conditions(
     all_subject_summary_vel,
     "peak_speed",
     trial_labels,
-    ylabel="Peak speed [m/s]"
+    ylabel="Peak speed [m/s]",
+    title="Peak CoM Speed"
 )
 
 plot_subject_level_across_conditions(
     all_subject_summary_vel,
     "integrated_kinetic_energy",
     trial_labels,
-    ylabel="Integrated kinetic-energy proxy"
+    ylabel="||v||^2",
+    title="Integrated kinetic-energy proxy"
 )
+
+# Position metrics
+analyze_metric(all_subject_summary_com, "peak_error", trial_labels)
+analyze_metric(all_subject_summary_com, "settling_time_samples", trial_labels)
+analyze_metric(all_subject_summary_com, "integrated_error", trial_labels)
+
+# Velocity metrics
+analyze_metric(all_subject_summary_vel, "peak_speed", trial_labels)
+analyze_metric(all_subject_summary_vel, "integrated_kinetic_energy", trial_labels)

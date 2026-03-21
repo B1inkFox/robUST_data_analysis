@@ -395,30 +395,16 @@ def plot_subject_level_across_conditions(
     metric_name,
     trial_labels,
     ylabel,
+    title,
     subject_labels=None,
     show_errorbars=True,
-    figsize=(8, 5),
+    figsize=(6, 4),
+    offset=0.05,   # NEW
 ):
     """
-    Plot subject-level aggregation across conditions.
-
-    Each subject is one line across controller conditions.
-
-    Parameters
-    ----------
-    all_subject_summary : list
-        Nested list: [subject][condition] -> summary dict
-    metric_name : str
-        Metric key, e.g. 'peak_error'
-    trial_labels : list[str]
-        Condition names, e.g. ['tran', 'imp', 'mpc']
-    ylabel : str
-        Y-axis label
-    subject_labels : list[str] or None
-        Subject names. If None, use S1, S2, ...
-    show_errorbars : bool
-        Whether to show event-level std as error bars
+    Plot subject-level aggregation across conditions with x-offset per subject.
     """
+
     means, stds = extract_subject_condition_stats(all_subject_summary, metric_name)
 
     n_subjects, n_conditions = means.shape
@@ -427,22 +413,30 @@ def plot_subject_level_across_conditions(
     if subject_labels is None:
         subject_labels = [f"S{i+1}" for i in range(n_subjects)]
 
+    # Create symmetric offsets around 0
+    offsets = np.linspace(-offset, offset, n_subjects)
+
     plt.figure(figsize=figsize)
 
     for s in range(n_subjects):
+        x_shifted = x + offsets[s]
+
         if show_errorbars:
             plt.errorbar(
-                x,
+                x_shifted,
                 means[s],
                 yerr=stds[s],
                 marker="o",
-                linewidth=2,
-                capsize=4,
+                linewidth=1.5,
+                capsize=6,
+                elinewidth=4,
+                capthick=1,
                 label=subject_labels[s],
+                alpha=0.8
             )
         else:
             plt.plot(
-                x,
+                x_shifted,
                 means[s],
                 marker="o",
                 linewidth=2,
@@ -451,7 +445,7 @@ def plot_subject_level_across_conditions(
 
     plt.xticks(x, trial_labels)
     plt.ylabel(ylabel)
-    plt.title(metric_name.replace("_", " ").title())
+    plt.title(title)
     plt.grid(True, axis="y", alpha=0.3)
     plt.legend()
     plt.tight_layout()
