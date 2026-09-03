@@ -203,7 +203,7 @@ def analyze_position_data(
 
     summary = {
         "peak_error": _safe_stats([r["peak_error"] for r in results]),
-        "settling_time_samples": _safe_stats([r["settling_time"] for r in results]),
+        "settling_time": _safe_stats([r["settling_time"] for r in results]),
         "integrated_error": _safe_stats([r["integrated_error"] for r in results]),
     }
 

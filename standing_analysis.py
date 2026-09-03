@@ -10,10 +10,10 @@ DT = 0.01
 BASELINE_WINDOW = [-200, -100]
 INTEGRAL_WINDOW = [0, 400]
 
-#csv_path_list, num_spikes_list = S1_STAND_FILE, S1_STAND_CNT
+csv_path_list, num_spikes_list = S1_STAND_FILE, S1_STAND_CNT
 #csv_path_list, num_spikes_list = S2_STAND_FILE, S2_STAND_CNT
 #csv_path_list, num_spikes_list = S3_STAND_FILE, S3_STAND_CNT
-csv_path_list, num_spikes_list = S4_STAND_FILE, S4_STAND_CNT
+#csv_path_list, num_spikes_list = S4_STAND_FILE, S4_STAND_CNT
 #csv_path_list, num_spikes_list = S5_STAND_FILE, S5_STAND_CNT
 #csv_path_list, num_spikes_list = S6_STAND_FILE, S6_STAND_CNT
 

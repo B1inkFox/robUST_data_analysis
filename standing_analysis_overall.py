@@ -82,7 +82,7 @@ for subject_idx, (csv_path_list, num_spikes_list) in enumerate(subject_files):
     all_subject_results_com.append(subject_results_com)
     all_subject_results_vel.append(subject_results_vel)
 
-
+"""
 # Position metrics
 plot_subject_level_across_conditions(
     all_subject_summary_com,
@@ -124,12 +124,67 @@ plot_subject_level_across_conditions(
     ylabel="||v||^2",
     title="Integrated kinetic-energy proxy"
 )
+"""
 
+baseline_label = "Impedance"
 # Position metrics
-analyze_metric(all_subject_summary_com, "peak_error", trial_labels)
-analyze_metric(all_subject_summary_com, "settling_time_samples", trial_labels)
-analyze_metric(all_subject_summary_com, "integrated_error", trial_labels)
+res_peak_error = analyze_metric(
+    all_subject_summary_com,
+    "peak_error",
+    trial_labels,
+    all_subject_results=all_subject_results_com,
+    run_friedman=True,
+    run_anova=True,
+    run_wilcoxon=True,
+    run_mixedlm=True,
+    baseline_label=baseline_label,
+)
+
+res_settling = analyze_metric(
+    all_subject_summary_com,
+    "settling_time",
+    trial_labels,
+    all_subject_results=all_subject_results_com,
+    run_friedman=True,
+    run_anova=True,
+    run_wilcoxon=True,
+    run_mixedlm=True,
+    baseline_label=baseline_label,
+)
+
+res_integrated = analyze_metric(
+    all_subject_summary_com,
+    "integrated_error",
+    trial_labels,
+    all_subject_results=all_subject_results_com,
+    run_friedman=True,
+    run_anova=True,
+    run_wilcoxon=True,
+    run_mixedlm=True,
+    baseline_label=baseline_label,
+)
 
 # Velocity metrics
-analyze_metric(all_subject_summary_vel, "peak_speed", trial_labels)
-analyze_metric(all_subject_summary_vel, "integrated_kinetic_energy", trial_labels)
+res_peak_speed = analyze_metric(
+    all_subject_summary_vel,
+    "peak_speed",
+    trial_labels,
+    all_subject_results=all_subject_results_vel,
+    run_friedman=True,
+    run_anova=True,
+    run_wilcoxon=True,
+    run_mixedlm=True,
+    baseline_label=baseline_label,
+)
+
+res_integrated_ke = analyze_metric(
+    all_subject_summary_vel,
+    "integrated_kinetic_energy",
+    trial_labels,
+    all_subject_results=all_subject_results_vel,
+    run_friedman=True,
+    run_anova=True,
+    run_wilcoxon=True,
+    run_mixedlm=True,
+    baseline_label=baseline_label,
+)

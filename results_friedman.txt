@@ -1,0 +1,57 @@
+=== peak_error ===
+
+Condition stats (mean ± std across subjects):
+Transparent: 0.0974 ± 0.0368
+Impedance: 0.0968 ± 0.0291
+MPC: 0.0783 ± 0.0194
+
+Friedman: chi2 = 6.3333, p = 0.0421
+
+Pairwise Wilcoxon:
+Transparent vs Impedance: p = 0.6875, Δ = 0.0006, d = 0.0315
+Transparent vs MPC: p = 0.1562, Δ = 0.0191, d = 0.7248
+Impedance vs MPC: p = 0.0312, Δ = 0.0185, d = 1.2974
+
+=== settling_time ===
+
+Condition stats (mean ± std across subjects):
+Transparent: 1.2744 ± 0.2614
+Impedance: 0.7808 ± 0.3618
+MPC: 0.6577 ± 0.2666
+
+Friedman: chi2 = 7.0000, p = 0.0302
+
+Pairwise Wilcoxon:
+Transparent vs Impedance: p = 0.0625, Δ = 0.4936, d = 1.2988
+Transparent vs MPC: p = 0.0312, Δ = 0.6168, d = 1.9080
+Impedance vs MPC: p = 0.6875, Δ = 0.1232, d = 0.2203
+
+
+=== integrated_error ===
+
+Condition stats (mean ± std across subjects):
+Transparent: 0.1576 ± 0.0671
+Impedance: 0.1135 ± 0.0382
+MPC: 0.0837 ± 0.0241
+
+Friedman: chi2 = 4.3333, p = 0.1146
+
+Pairwise Wilcoxon:
+Transparent vs Impedance: p = 0.0625, Δ = 0.0441, d = 1.0275
+Transparent vs MPC: p = 0.0938, Δ = 0.0739, d = 1.0175
+Impedance vs MPC: p = 0.1562, Δ = 0.0299, d = 0.7931
+
+
+=== peak_speed ===
+
+Condition stats (mean ± std across subjects):
+Transparent: 0.3130 ± 0.0820
+Impedance: 0.3071 ± 0.0696
+MPC: 0.2926 ± 0.0726
+
+Friedman: chi2 = 4.0000, p = 0.1353
+
+Pairwise Wilcoxon:
+Transparent vs Impedance: p = 0.6875, Δ = 0.0059, d = 0.2098
+Transparent vs MPC: p = 0.2188, Δ = 0.0205, d = 0.7480
+Impedance vs MPC: p = 0.0312, Δ = 0.0146, d = 2.0184
